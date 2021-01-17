@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <iostream>
+#include <boost/regex.hpp>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -18,40 +19,40 @@ int action(){
     //ser = " cat text.cpp|who|uniq |sort | wc -l ";
     char omar[1024]; //= (char *) " cat 4.txt|who|uniq |sort | wc -l ";
     std::cin.getline(omar, 1024);
-    std::regex pipers("\\b[^|]+\\b");
+    boost::regex pipers("\\b[^|]+\\b");
     ser = omar;
 
 
     auto words_begin =
-        std::sregex_iterator(ser.begin(),ser.end(),pipers);
-    auto words_end = std::sregex_iterator();
+        boost::sregex_iterator(ser.begin(),ser.end(),pipers);
+    auto words_end = boost::sregex_iterator();
 
-    std::smatch sm;
+    boost::smatch sm;
     std::vector<std::string> veccommand;
 
-    for(std::sregex_iterator i = words_begin;i!=words_end;++i){
-        std::smatch a=*i;
+    for(boost::sregex_iterator i = words_begin;i!=words_end;++i){
+        boost::smatch a=*i;
         veccommand.emplace(veccommand.end(), a.str());
 
     }
 
-    std::copy(veccommand.begin(), veccommand.end(),
-              std::ostream_iterator<std::string>{std::cout," "});
+    //std::copy(veccommand.begin(), veccommand.end(),
+      //        std::ostream_iterator<std::string>{std::cout," "});
 
-    std::cout <<'\n';
+    //std::cout <<'\n';
 
     std::vector<std::vector<std::string>> resultvector;
 
-    std::regex com("\\S+");
+    boost::regex com("\\S+");
 
     for(auto it = veccommand.begin(); it!= veccommand.end(); it++){
-        auto w_begin = std::sregex_iterator(it->begin(), it->end(),com);
-        auto w_end = std::sregex_iterator();
+        auto w_begin = boost::sregex_iterator(it->begin(), it->end(),com);
+        auto w_end = boost::sregex_iterator();
 
         bool flag=0;
 
         for(auto i = w_begin; i!=w_end; ++i){
-            std::smatch matches=*i;
+            boost::smatch matches=*i;
 
             if (flag == 0){
                 //std::cout <<matches.str() <<" ";
@@ -67,12 +68,12 @@ int action(){
         //std::cout <<'\n';
     }
 
-    for(auto &a:resultvector){
+   /* for(auto &a:resultvector){
         for(auto &b:a){
             std::cout <<b <<" ";
         }
         std::cout <<"\n";
-    }
+    }*/
 
 
     pid_t parent = getpid();
@@ -85,7 +86,7 @@ int action(){
 
         char* args[resultvector[i].size()+1];
         for (int k=0;k < resultvector[i].size(); ++k){
-            std::cout <<k <<" ";
+            //std::cout <<k <<" ";
             args[k] = (char *)resultvector[i][k].c_str();
             //std::cout <<args[i] << " ";
             if(k==resultvector[i].size()-1){
@@ -108,7 +109,7 @@ int action(){
 
         char* args[resultvector.back().size()+1];
         for (int k=0;k < resultvector.back().size(); ++k){
-            std::cout <<k <<" ";
+            //std::cout <<k <<" ";
             args[k] = (char *)resultvector.back()[k].c_str();
             //std::cout <<args[i] << " ";
             if(k==resultvector.back().size()-1){
